@@ -24,7 +24,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) bin $(1)/bin/$(PKG_NAME)
+	$(INSTALL_BIN) otb-tracker_* $(1)/bin/
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DATA) lib $(1)/lib/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/init.d

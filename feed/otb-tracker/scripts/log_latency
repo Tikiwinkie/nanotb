@@ -1,4 +1,4 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
-[ -z "$SIMPLETRACKER_INTERFACE_LATENCY" ] && exit 0
-logger -t "log_latency" "$SIMPLETRACKER_METHOD $SIMPLETRACKER_INTERFACE in $SIMPLETRACKER_INTERFACE_LATENCY ms on $SIMPLETRACKER_HOST"
+[ -z "$OTB_TRACKER_INTERFACE_LATENCY" ] && exit 0
+logger -t "otb-tracker_log_latency" "$OTB_TRACKER_METHOD $OTB_TRACKER_INTERFACE in $OTB_TRACKER_INTERFACE_LATENCY ms on $OTB_TRACKER_HOST"

@@ -1,0 +1,29 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+
+. /lib/otb-tracker
+
+usage() {
+	printf "Usage : %s: [-t TIMEOUT] [-h HOST] [-i INTERFACE]\n" "$0"
+	exit 1
+}
+
+needed_args() {
+	echo "$OTB_TRACKER_TIMEOUT" "$OTB_TRACKER_HOST" "$OTB_TRACKER_INTERFACE"
+}
+
+otb_tracker_init_tracking "$@"
+OTB_TRACKER_METHOD='tcp_curl'
+
+result=$( curl \
+	--interface "$OTB_TRACKER_INTERFACE" \
+	--max-time "$OTB_TRACKER_TIMEOUT" \
+	--silent \
+	$OTB_TRACKER_OPTIONS \
+	"$OTB_TRACKER_HOST" )
+
+otb_tracker_set_status "$?"
+
+[ "$OTB_TRACKER_STATUS" = "OK" ] && OTB_TRACKER_INTERFACE_PUBLIC_IP="$result"
+
+otb_tracker_post_tracking
