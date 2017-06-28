@@ -9,20 +9,21 @@ usage() {
 }
 
 needed_args() {
-	echo "$OTB_TRACKER_TIMEOUT" "$OTB_TRACKER_HOST" "$OTB_TRACKER_INTERFACE"
+	echo "$OTB_TRACKER_TIMEOUT" "$OTB_TRACKER_HOST" "$OTB_TRACKER_INTERFACE" "$OTB_TRACKER_RETRY"
 }
 
-otb_tracker_init_tracking "$@"
+tracking_command() {
+	ping \
+		-c 1 \
+		-I "$OTB_TRACKER_INTERFACE" \
+		-W "$OTB_TRACKER_TIMEOUT" \
+		$OTB_TRACKER_OPTIONS \
+		"$OTB_TRACKER_HOST" 2>&1
+}
+
+tracking_result() {
+	[ "$OTB_TRACKER_STATUS" = "OK" ] && OTB_TRACKER_INTERFACE_LATENCY=$( echo "$OTB_TRACKER_RESULT" | cut -d '/' -s -f4 )
+}
+
 OTB_TRACKER_METHOD='icmp'
-
-result=$( ping \
-	-c 1 \
-	-I "$OTB_TRACKER_INTERFACE" \
-	-W "$OTB_TRACKER_TIMEOUT" \
-	$OTB_TRACKER_OPTIONS \
-	"$OTB_TRACKER_HOST" 2>&1 )
-
-otb_tracker_set_status "$?"
-[ "$OTB_TRACKER_STATUS" = "OK" ] && OTB_TRACKER_INTERFACE_LATENCY=$( echo "$result" | cut -d '/' -s -f4 )
-
-otb_tracker_post_tracking
+otb_tracker_track "$@"

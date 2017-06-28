@@ -1,36 +1,38 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
-otb_tracker_export_vars() {
+_otb_tracker_export_vars() {
 	export OTB_TRACKER_INTERFACE
 	export OTB_TRACKER_METHOD
 	export OTB_TRACKER_TIMEOUT
 	export OTB_TRACKER_HOST
 	export OTB_TRACKER_DOMAIN
 	export OTB_TRACKER_STATUS
+	export OTB_TRACKER_RESULT
+	export OTB_TRACKER_FIRST_STATUS
 	export OTB_TRACKER_INTERFACE_STATE
 	export OTB_TRACKER_INTERFACE_PUBLIC_IP
 	export OTB_TRACKER_INTERFACE_LATENCY
 }
 
-otb_tracker_post_tracking() {
+_otb_tracker_post_tracking() {
 	for file_path in /usr/share/otb/tracking.d/*; do
 		[ -f "$file_path" ] || continue
 		"$file_path"
 	done
 }
 
-otb_tracker_check_args() {
+_otb_tracker_check_args() {
 	for option in "$@"; do
 		[ -z "$option" ] && usage
 	done
 }
 
-otb_tracker_set_status() {
+_otb_tracker_set_status() {
 	[ "$1" = 0 ] && OTB_TRACKER_STATUS="OK" || OTB_TRACKER_STATUS="ERROR"
 }
 
-otb_tracker_retrieve_args() {
+_otb_tracker_retrieve_args() {
 	while [ "$1" != "" ]; do
 		case $1 in
 			-i)	shift
@@ -41,14 +43,37 @@ otb_tracker_retrieve_args() {
 				OTB_TRACKER_TIMEOUT="$1";;
 			-d)	shift
 				OTB_TRACKER_DOMAIN="$1";;
+			-r) shift
+				OTB_TRACKER_RETRY="$1";;
 			*)	OTB_TRACKER_OPTIONS="$OTB_TRACKER_OPTIONS $1"
 		esac
 		shift
 	done
 }
 
-otb_tracker_init_tracking() {
-	otb_tracker_retrieve_args "$@"
-	otb_tracker_check_args $(needed_args)
-	otb_tracker_export_vars
+_otb_tracker_execute_command() {
+	OTB_TRACKER_RESULT=$(tracking_command)
+	_otb_tracker_set_status "$?"
+}
+
+_otb_tracker_retry() {
+	OTB_TRACKER_TIMEOUT=$((OTB_TRACKER_TIMEOUT*2))
+	_otb_tracker_execute_command
+}
+
+_otb_tracker_init_tracking() {
+	_otb_tracker_retrieve_args "$@"
+	_otb_tracker_check_args $(needed_args)
+	_otb_tracker_export_vars
+}
+
+otb_tracker_track() {
+	_otb_tracker_init_tracking "$@"
+	_otb_tracker_execute_command
+	OTB_TRACKER_FIRST_STATUS=$OTB_TRACKER_STATUS
+	for _ in $OTB_TRACKER_RETRY; do
+		[ $OTB_TRACKER_STATUS != "OK" ] && _otb_tracker_retry
+	done
+	tracking_result
+	_otb_tracker_post_tracking
 }
