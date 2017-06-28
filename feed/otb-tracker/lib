@@ -16,9 +16,9 @@ _otb_tracker_export_vars() {
 }
 
 _otb_tracker_post_tracking() {
-	for file_path in /usr/share/otb/tracking.d/*; do
-		[ -f "$file_path" ] || continue
-		"$file_path"
+	for tracker_bin_path in /usr/share/otb/tracking.d/*; do
+		[ -f "$tracker_bin_path" ] || continue
+		"$tracker_bin_path"
 	done
 }
 
@@ -38,13 +38,13 @@ _otb_tracker_retrieve_args() {
 		case $1 in
 			-i)	shift
 				OTB_TRACKER_INTERFACE="$1";;
-			-h) shift
+			-h)	shift
 				OTB_TRACKER_HOST="$1";;
-			-t) shift
+			-t)	shift
 				OTB_TRACKER_TIMEOUT="$1";;
 			-d)	shift
 				OTB_TRACKER_DOMAIN="$1";;
-			-r) shift
+			-r)	shift
 				OTB_TRACKER_RETRY="$1";;
 			*)	OTB_TRACKER_OPTIONS="$OTB_TRACKER_OPTIONS $1"
 		esac

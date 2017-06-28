@@ -8,8 +8,7 @@ USE_PROCD=1
 validate() {
 	section="$1"
 	tracking_method="$2"
-	shift
-	shift
+	shift 2
 	uci_validate_section otb-tracker "$tracking_method" "$section" \
 		'host:host' \
 		'interface:string' \
