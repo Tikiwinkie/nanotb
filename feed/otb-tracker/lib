@@ -23,8 +23,9 @@ _otb_tracker_post_tracking() {
 }
 
 _otb_tracker_check_args() {
-	for option in "$@"; do
-		[ -z "$option" ] && usage
+	for argname in "$@"; do
+		eval "arg=\$$argname"
+		[ -z "$arg" ] && usage
 	done
 }
 
