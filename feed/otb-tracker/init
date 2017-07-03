@@ -55,7 +55,3 @@ start_service() {
 		config_foreach start_track_"$tracking_method" "$tracking_method" "$tracking_method"
 	done
 }
-
-stop_service() {
-	echo "Quitting otb-tracker"
-}

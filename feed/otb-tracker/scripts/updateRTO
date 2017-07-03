@@ -1,0 +1,34 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+
+[ "$OTB_TRACKER_FIRST_STATUS" = "OK" ] || exit 0
+[ -z "$OTB_TRACKER_INTERFACE_LATENCY" ] && exit 0
+
+path=/tmp/otb-tracker/"$OTB_TRACKER_INTERFACE"/"$OTB_TRACKER_METHOD"/"$OTB_TRACKER_HOST"
+srtt_path="$path"/srtt
+rto_path="$path"/rto
+alpha=0.8
+beta=1.75
+min_timeout=10
+max_timeout=60000
+
+mkdir -p "$path"
+touch "$srtt_path"
+touch "$rto_path"
+
+rto="$( cat "$rto_path" )"
+echo "$OTB_TRACKER_INTERFACE_LATENCY	$rto" >> "$path"/plot
+
+srtt=$( cat "$srtt_path" )
+
+if [ -z "$srtt" ]; then
+	echo "$OTB_TRACKER_INTERFACE_LATENCY" > "$srtt_path"
+else
+	srtt=$(echo "($srtt*$alpha)+((1-$alpha)*$OTB_TRACKER_INTERFACE_LATENCY)" | bc)
+	echo "$srtt" > "$srtt_path"
+fi
+
+cto=$(echo "$beta * $srtt" | bc)
+[ "$(echo "$cto > $min_timeout" | bc)" -eq 1 ] && rto="$cto" || rto="$min_timeout"
+[ "$(echo "$rto > $max_timeout" | bc)" -eq 1 ] && rto="$max_timeout"
+echo "$rto" > "$rto_path"
