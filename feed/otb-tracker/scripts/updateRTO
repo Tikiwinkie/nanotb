@@ -4,7 +4,9 @@
 [ "$OTB_TRACKER_FIRST_STATUS" = "OK" ] || exit 0
 [ -z "$OTB_TRACKER_INTERFACE_LATENCY" ] && exit 0
 
-path=/tmp/otb-tracker/"$OTB_TRACKER_INTERFACE"/"$OTB_TRACKER_METHOD"/"$OTB_TRACKER_HOST"
+. /lib/otb-tracker
+
+path="$(otb_tracker_interface_infos_path "$OTB_TRACKER_INTERFACE")/$OTB_TRACKER_METHOD/$OTB_TRACKER_HOST"
 srtt_path="$path"/srtt
 rto_path="$path"/rto
 alpha=0.8

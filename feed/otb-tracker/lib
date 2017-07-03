@@ -1,6 +1,8 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
+OTB_TRACKER_BASE_INFOS_PATH="/tmp/otb-tracker"
+
 _otb_tracker_export_vars() {
 	export OTB_TRACKER_INTERFACE
 	export OTB_TRACKER_METHOD
@@ -70,4 +72,8 @@ otb_tracker_track() {
 	done
 	tracking_result
 	_otb_tracker_post_tracking
+}
+
+otb_tracker_interface_infos_path(){
+	echo "$OTB_TRACKER_BASE_INFOS_PATH/$1"
 }
