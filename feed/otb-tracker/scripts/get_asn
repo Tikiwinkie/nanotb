@@ -1,0 +1,6 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+[ -z "$OTB_TRACKER_INTERFACE_PUBLIC_IP" ] && exit 0
+result=$(curl --interface "$OTB_TRACKER_INTERFACE" --silent http://api.iptoasn.com/v1/as/ip/"$OTB_TRACKER_INTERFACE_PUBLIC_IP")
+[ $? = 0 ] || exit 0
+echo "$result" | jq '.as_description' > /tmp/otb-tracker/"$OTB_TRACKER_INTERFACE/asn"
