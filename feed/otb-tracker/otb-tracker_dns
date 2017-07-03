@@ -4,15 +4,6 @@
 . /lib/otb-tracker
 . /lib/functions/network.sh
 
-usage() {
-	printf "Usage : %s: [-t TIMEOUT] [-h HOST] [-i INTERFACE] [-d DOMAIN]\n" "$0"
-	exit 1
-}
-
-needed_args() {
-	echo OTB_TRACKER_TIMEOUT OTB_TRACKER_HOST OTB_TRACKER_INTERFACE OTB_TRACKER_RETRY OTB_TRACKER_DOMAIN
-}
-
 _get_interface_ip() {
 	network_flush_cache
 	network_get_ipaddr interface_ip "$OTB_TRACKER_INTERFACE"

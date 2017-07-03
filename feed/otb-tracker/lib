@@ -9,6 +9,7 @@ _otb_tracker_export_vars() {
 	export OTB_TRACKER_DOMAIN
 	export OTB_TRACKER_STATUS
 	export OTB_TRACKER_RESULT
+	export OTB_TRACKER_OPTIONS
 	export OTB_TRACKER_FIRST_STATUS
 	export OTB_TRACKER_INTERFACE_STATE
 	export OTB_TRACKER_INTERFACE_PUBLIC_IP
@@ -19,13 +20,6 @@ _otb_tracker_post_tracking() {
 	for tracker_bin_path in /usr/share/otb/tracking.d/*; do
 		[ -f "$tracker_bin_path" ] || continue
 		"$tracker_bin_path"
-	done
-}
-
-_otb_tracker_check_args() {
-	for argname in "$@"; do
-		eval "arg=\$$argname"
-		[ -z "$arg" ] && usage
 	done
 }
 
@@ -64,7 +58,6 @@ _otb_tracker_retry() {
 
 _otb_tracker_init_tracking() {
 	_otb_tracker_retrieve_args "$@"
-	_otb_tracker_check_args $(needed_args)
 	_otb_tracker_export_vars
 }
 
