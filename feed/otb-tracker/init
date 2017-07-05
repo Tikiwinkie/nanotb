@@ -55,3 +55,7 @@ start_service() {
 		config_foreach start_track_"$tracking_method" "$tracking_method" "$tracking_method"
 	done
 }
+
+service_triggers() {
+	procd_add_reload_trigger "otb-tracker"
+}
